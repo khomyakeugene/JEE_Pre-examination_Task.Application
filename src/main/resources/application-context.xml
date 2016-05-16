@@ -82,16 +82,9 @@
     </bean>
 
     <!-- DB-CONTEXT, intentionally do not exclude from here and store in the separate context-file such as "db-context.xml" -->
-    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
-
-    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:jdbc.properties"/>
     </bean>
-
     <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="dataSource">
         <property name="driverClass" value="${jdbc.driver.class}"/>
         <property name="jdbcUrl" value="${jdbc.url}"/>
@@ -101,6 +94,12 @@
         <property name="maxPoolSize" value="${jdbc.max.connections}"/>
         <property name="acquireIncrement" value="${jdc.acquire.increment}"/>
     </bean>
+
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <!-- END OF DB-CONTEXT -->
 
     <!-- AOP-CONTEXT, , intentionally do not exclude from here and store in the separate context-file such as "aop-context.xml" -->
