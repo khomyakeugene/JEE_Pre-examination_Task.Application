@@ -17,11 +17,19 @@ public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
     private static final String SQL_INSERT_QUERY =
             "INSERT INTO protocol (user_id, event_id, description) VALUES (?, ?, ?)";
 
+    private JdbcUserDicDao jdbcUserDicDao = new JdbcUserDicDao();
     private int currentUserId;
+
+    @Override
+    public void setDataSource(DataSource dataSource) {
+        super.setDataSource(dataSource);
+
+        jdbcUserDicDao.setDataSource(dataSource);
+    }
 
     private int getCurrentUserId() {
         if (currentUserId == 0) {
-            currentUserId = (new JdbcUserDicDao()).getCurrentUserId();
+            currentUserId = jdbcUserDicDao.getCurrentUserId();
         }
 
         return currentUserId;

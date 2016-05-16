@@ -99,10 +99,20 @@
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean class="com.company.calculator.model.jdbc.JdbcProtocolDao" id="protocolDao">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean class="com.company.calculator.model.jdbc.JdbcCalculationDataDao" id="calculationDataDao">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
     <!-- END OF DB-CONTEXT -->
 
     <!-- AOP-CONTEXT, , intentionally do not exclude from here and store in the separate context-file such as "aop-context.xml" -->
-    <bean id="logAspect" class="com.company.calculator.aop.LogAspect"/>
+    <bean id="logAspect" class="com.company.calculator.aop.LogAspect">
+        <property name="jdbcCalculationDataDao" ref="calculationDataDao"/>
+    </bean>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <!-- END OF AOP-CONTEXT -->
 </beans>

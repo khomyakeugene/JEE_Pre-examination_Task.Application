@@ -104,7 +104,7 @@ public class Util {
         return System.nanoTime();
     }
 
-    public static long nanoToMilliTime(long nanoTime) {
+    public static long nanoToMicroTime(long nanoTime) {
         return nanoTime / 1000;
     }
 

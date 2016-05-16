@@ -78,12 +78,12 @@ public class AOPLogger {
 
     private static String logMessage(JoinPoint joinPoint, Object result, long executionNanoTime) {
         return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint, result),
-                Util.nanoToMilliTime(executionNanoTime));
+                Util.nanoToMicroTime(executionNanoTime));
     }
 
     private static String logMessage(JoinPoint joinPoint, long executionNanoTime) {
         return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint),
-                Util.nanoToMilliTime(executionNanoTime));
+                Util.nanoToMicroTime(executionNanoTime));
     }
 
     public static void debug(JoinPoint joinPoint, Object result, long executionNanoTime) {
