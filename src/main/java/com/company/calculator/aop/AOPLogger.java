@@ -19,7 +19,7 @@ public class AOPLogger {
         logger = Logger.getLogger(Util.getApplicationMainClass());
     }
 
-    public static Logger getLogger() {
+    private static Logger getLogger() {
         if (logger == null) {
             initLogger();
         }
@@ -27,14 +27,14 @@ public class AOPLogger {
         return logger;
     }
 
-    public static String methodFullName(JoinPoint joinPoint) {
+    private static String methodFullName(JoinPoint joinPoint) {
         Signature signature = joinPoint.getSignature();
 
         return String.format("%s.%s", signature.getDeclaringTypeName(),
                 signature.getName());
     }
 
-    public static String methodParameters(JoinPoint joinPoint) {
+    private static String methodParameters(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature)joinPoint.getSignature();
         String[] parameterNames = signature.getParameterNames();
         Object[] parameterValues = joinPoint.getArgs();
@@ -50,7 +50,7 @@ public class AOPLogger {
         return result;
     }
 
-    public static String methodResultRepresentation(JoinPoint joinPoint, Object methodResult) {
+    private static String methodResultRepresentation(JoinPoint joinPoint, Object methodResult) {
         String result = null;
 
         Class returnType = ((MethodSignature)joinPoint.getSignature()).getReturnType();
@@ -67,26 +67,29 @@ public class AOPLogger {
         return result;
     }
 
-    public static String logMessage(JoinPoint joinPoint) {
+    private static String logMessage(JoinPoint joinPoint) {
         return String.format("%s(%s)", methodFullName(joinPoint), methodParameters(joinPoint));
     }
 
-    public static String logMessage(JoinPoint joinPoint, Object result) {
+    private static String logMessage(JoinPoint joinPoint, Object result) {
         return (result == null) ? logMessage(joinPoint) :
                 String.format("%s = %s", logMessage(joinPoint), methodResultRepresentation(joinPoint, result));
     }
 
-    public static String logMessage(JoinPoint joinPoint, Object result, long executionNanoTime) {
+    private static String logMessage(JoinPoint joinPoint, Object result, long executionNanoTime) {
         return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint, result),
                 Util.nanoToMilliTime(executionNanoTime));
     }
 
-    public static String logMessage(JoinPoint joinPoint, long executionNanoTime) {
+    private static String logMessage(JoinPoint joinPoint, long executionNanoTime) {
         return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint),
                 Util.nanoToMilliTime(executionNanoTime));
     }
 
-    // printing methods:
+    public static void debug(JoinPoint joinPoint, Object result, long executionNanoTime) {
+        getLogger().debug(logMessage(joinPoint, result, executionNanoTime));
+    }
+
     public static void info(JoinPoint joinPoint, Object result, long executionNanoTime) {
         getLogger().info(logMessage(joinPoint, result, executionNanoTime));
     }

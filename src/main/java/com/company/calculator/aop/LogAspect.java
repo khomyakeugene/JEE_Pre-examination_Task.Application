@@ -14,28 +14,35 @@ import java.util.ArrayDeque;
 public class LogAspect {
     private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
     private long lastMethodExecutionNanoTime;
-    private static final String RESOURCE_LOG_MASK =
+    private static final String RESOURCE_LOG_INFO_MASK =
+            "(execution(* com.company.calculator.library.Calculator.execute(..)))";
+    private static final String RESOURCE_LOG_DEBUG_MASK =
             "(execution (public * com.company.calculator.library..*(..)) || " +
                     "execution (public * com.company.calculator.launcher..*(..))) && " +
                     "!execution(* com.company.calculator.library.Operation.getOperationCode()) &&" +
                     "!execution(* com.company.calculator.library.Calculator.operationCodeSet())";
 
-    @Before(RESOURCE_LOG_MASK)
+    @Before(RESOURCE_LOG_DEBUG_MASK)
     public void onBefore(JoinPoint joinPoint) throws Throwable {
         startTimeStack.push(Util.getNanoTime());
     }
 
-    @After(RESOURCE_LOG_MASK)
+    @After(RESOURCE_LOG_DEBUG_MASK)
     public void onAfter(JoinPoint joinPoint) throws Throwable {
         lastMethodExecutionNanoTime = (Util.getNanoTime() - startTimeStack.pop());
     }
 
-    @AfterReturning(pointcut = RESOURCE_LOG_MASK, returning = "result")
-    public void onAfterReturning(JoinPoint joinPoint, Object result) throws Throwable {
+    @AfterReturning(pointcut = RESOURCE_LOG_DEBUG_MASK + "&& !" + RESOURCE_LOG_INFO_MASK, returning = "result")
+    public void onAfterReturningDebug(JoinPoint joinPoint, Object result) throws Throwable {
+        AOPLogger.debug(joinPoint, result, lastMethodExecutionNanoTime);
+    }
+
+    @AfterReturning(pointcut = RESOURCE_LOG_INFO_MASK, returning = "result")
+    public void onAfterReturningInfo(JoinPoint joinPoint, Object result) throws Throwable {
         AOPLogger.info(joinPoint, result, lastMethodExecutionNanoTime);
     }
 
-    @AfterThrowing(pointcut = RESOURCE_LOG_MASK, throwing = "throwable")
+    @AfterThrowing(pointcut = RESOURCE_LOG_DEBUG_MASK, throwing = "throwable")
     public void onAfterThrowing(JoinPoint joinPoint, Throwable throwable) {
         AOPLogger.error(joinPoint, throwable, lastMethodExecutionNanoTime);
     }
