@@ -16,6 +16,8 @@ public class JdbcUserDicDao extends JdbcDao implements UserDicDao {
     private static final String SQL_GET_USED_ID_QUERY =
             "SELECT user_id FROM user_dic WHERE (user_name = ?)";
 
+    private int currentUserId;
+
     @Override
     public int getUserIdByName(String userName) {
         try (Connection connection = dataSource.getConnection();
@@ -31,5 +33,14 @@ public class JdbcUserDicDao extends JdbcDao implements UserDicDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int getCurrentUserId() {
+        if (currentUserId == 0) {
+            currentUserId = getUserIdByName(currentUser());
+        }
+
+        return currentUserId;
     }
 }

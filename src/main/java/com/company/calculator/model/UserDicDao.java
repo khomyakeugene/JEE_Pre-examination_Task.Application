@@ -5,4 +5,7 @@ package com.company.calculator.model;
  */
 public interface UserDicDao {
     int getUserIdByName(String userName);
+
+    int getCurrentUserId();
+
 }

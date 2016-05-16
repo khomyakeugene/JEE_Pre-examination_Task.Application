@@ -14,9 +14,18 @@ import java.sql.SQLException;
 public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
     private static final String CANNOT_INSERT_RECORD_TO_PROTOCOL_PATTERN =
             "Cannot insert record to protocol (user_id = %d, event_id = %d, description = %s)";
-
     private static final String SQL_INSERT_QUERY =
             "INSERT INTO protocol (user_id, event_id, description) VALUES (?, ?, ?)";
+
+    private int currentUserId;
+
+    private int getCurrentUserId() {
+        if (currentUserId == 0) {
+            currentUserId = (new JdbcUserDicDao()).getCurrentUserId();
+        }
+
+        return currentUserId;
+    }
 
     @Override
     public int insert(int userId, int eventId, String description) {
@@ -37,5 +46,10 @@ public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int insert(int eventId, String description) {
+        return insert(getCurrentUserId(), eventId, description);
     }
 }

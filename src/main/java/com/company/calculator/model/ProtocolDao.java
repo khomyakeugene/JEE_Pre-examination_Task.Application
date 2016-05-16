@@ -5,4 +5,6 @@ package com.company.calculator.model;
  */
 public interface ProtocolDao {
     int insert(int userId, int eventId, String description);
+
+    int insert(int eventId, String description);
 }
