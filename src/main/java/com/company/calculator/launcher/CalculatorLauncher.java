@@ -1,9 +1,11 @@
 package com.company.calculator.launcher;
 
+import com.company.calculator.library.Operation;
 import com.company.calculator.library.SimpleCalculator;
 import com.company.util.Util;
 
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Created by Yevhen on 23.04.2016.
@@ -16,9 +18,12 @@ public class CalculatorLauncher {
     public void interactiveCalculation(SimpleCalculator simpleCalculator) {
         String expression;
 
+        Set<String> operationCodeSet = simpleCalculator.operationCodeSet();
+        String[] operationCodeList = operationCodeSet.toArray(new String[operationCodeSet.size()]);
+
         do {
             expression = Util.readInputString(String.format(PROMPT_MESSAGE,
-                    Arrays.toString(simpleCalculator.operationCodeList())));
+                    Arrays.toString(operationCodeList)));
             if (!expression.isEmpty()) {
                 try {
                     Util.printMessage(String.format(RESULT_PATTERN, expression, simpleCalculator.execute(expression.trim())));

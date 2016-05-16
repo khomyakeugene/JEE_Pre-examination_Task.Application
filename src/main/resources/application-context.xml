@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="com.company.calculator.launcher.NumberMultiplicationOperation" id="numberMultiplicationOperation">
+        <property name="operationCode" value="*"/>
+        <property name="rank" value="100"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.NumberDividingOperation" id="numberDividingOperation">
+        <property name="operationCode" value="/"/>
+        <property name="rank" value="100"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.SquareRootOperation" id="squareRootOperation">
+        <property name="operationCode" value="sqrt"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.Log10Operation" id="log10Operation">
+        <property name="operationCode" value="log10"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.LogOperation" id="logOperation">
+        <property name="operationCode" value="log"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.IncrementOperation" id="incrementOperation">
+        <property name="operationCode" value="++"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.DecrementOperation" id="decrementOperation">
+        <property name="operationCode" value="--"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.FactorialOperation" id="factorialOperation">
+        <property name="operationCode" value="!"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.DateAdditionOperation" id="dateAdditionOperation">
+        <property name="operationCode" value="+"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.launcher.DateSubtractOperation" id="dateSubtractOperation">
+        <property name="operationCode" value="-"/>
+        <property name="rank" value="200"/>
+    </bean>
+
+    <bean class="com.company.calculator.library.SimpleCalculator" id="simpleCalculator">
+        <property name="operationList">
+            <list value-type="com.company.calculator.library.Operation">
+                <ref bean="numberMultiplicationOperation"/>
+                <ref bean="numberDividingOperation"/>
+                <ref bean="squareRootOperation"/>
+                <ref bean="log10Operation"/>
+                <ref bean="logOperation"/>
+                <ref bean="incrementOperation"/>
+                <ref bean="decrementOperation"/>
+                <ref bean="factorialOperation"/>
+                <ref bean="dateAdditionOperation"/>
+                <ref bean="dateSubtractOperation"/>
+            </list>
+        </property>
+    </bean>
+
+    <import resource="aop-context.xml"/>
+</beans>

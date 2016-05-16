@@ -116,7 +116,7 @@
 
         <dependency>
             <groupId>com.company</groupId>
-            <artifactId>JEE_Unit_5.1_Homework.Library</artifactId>
+            <artifactId>JEE_Pre-examination_Task.Library</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>
