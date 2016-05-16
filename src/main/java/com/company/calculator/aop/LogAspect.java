@@ -14,23 +14,27 @@ import java.util.ArrayDeque;
 public class LogAspect {
     private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
     private long lastMethodExecutionNanoTime;
+    private static final String RESOURCE_LOG_MASK =
+            "execution (public * com.company.calculator.library..*(..)) && " +
+                    "!execution(* com.company.calculator.library.Operation.getOperationCode()) &&" +
+                    "!execution(* com.company.calculator.library.Calculator.operationCodeSet())";
 
-    @Before("execution (public * com.company.calculator.library..*(..))")
+    @Before(RESOURCE_LOG_MASK)
     public void onBefore(JoinPoint joinPoint) throws Throwable {
         startTimeStack.push(Util.getNanoTime());
     }
 
-    @After("execution (public * com.company.calculator.library..*(..))")
+    @After(RESOURCE_LOG_MASK)
     public void onAfter(JoinPoint joinPoint) throws Throwable {
         lastMethodExecutionNanoTime = (Util.getNanoTime() - startTimeStack.pop());
     }
 
-    @AfterReturning(pointcut = "execution (public * com.company.calculator.library..*(..))", returning = "result")
+    @AfterReturning(pointcut = RESOURCE_LOG_MASK, returning = "result")
     public void onAfterReturning(JoinPoint joinPoint, Object result) throws Throwable {
         AOPLogger.info(joinPoint, result, lastMethodExecutionNanoTime);
     }
 
-    @AfterThrowing(pointcut = "execution (public * com.company.calculator.library..*(..))", throwing = "throwable")
+    @AfterThrowing(pointcut = RESOURCE_LOG_MASK, throwing = "throwable")
     public void onAfterThrowing(JoinPoint joinPoint, Throwable throwable) {
         AOPLogger.error(joinPoint, throwable, lastMethodExecutionNanoTime);
     }
