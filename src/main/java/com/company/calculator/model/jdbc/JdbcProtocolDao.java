@@ -24,8 +24,8 @@ public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_QUERY)) {
 
             preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(1, eventId);
-            preparedStatement.setString(1, description);
+            preparedStatement.setInt(2, eventId);
+            preparedStatement.setString(3, description);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
