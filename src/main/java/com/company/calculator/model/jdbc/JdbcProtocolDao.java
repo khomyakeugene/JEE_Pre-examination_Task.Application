@@ -11,18 +11,12 @@ import java.sql.SQLException;
 /**
  * Created by Yevhen on 16.05.2016.
  */
-public class JdbcProtocolDao implements ProtocolDao {
+public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
     private static final String CANNOT_INSERT_RECORD_TO_PROTOCOL_PATTERN =
             "Cannot insert record to protocol (user_id = %d, event_id = %d, description = %s)";
 
     private static final String SQL_INSERT_QUERY =
             "INSERT INTO protocol (user_id, event_id, description) VALUES (?, ?, ?)";
-
-    private DataSource dataSource;
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public int insert(int userId, int eventId, String description) {
