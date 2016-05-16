@@ -1,6 +1,6 @@
 package com.company.calculator.launcher;
 
-import com.company.calculator.library.Operation;
+import com.company.calculator.library.Calculator;
 import com.company.calculator.library.SimpleCalculator;
 import com.company.util.Util;
 
@@ -15,10 +15,16 @@ public class CalculatorLauncher {
     private static final String FAREWELL_MESSAGE = "Thank you for use our calculator";
     private static final String RESULT_PATTERN = "%s = %s";
 
-    public void interactiveCalculation(SimpleCalculator simpleCalculator) {
+    Calculator calculator;
+
+    public void setCalculator(Calculator calculator) {
+        this.calculator = calculator;
+    }
+
+    public void interactiveCalculation() {
         String expression;
 
-        Set<String> operationCodeSet = simpleCalculator.operationCodeSet();
+        Set<String> operationCodeSet = calculator.operationCodeSet();
         String[] operationCodeList = operationCodeSet.toArray(new String[operationCodeSet.size()]);
 
         do {
@@ -26,7 +32,7 @@ public class CalculatorLauncher {
                     Arrays.toString(operationCodeList)));
             if (!expression.isEmpty()) {
                 try {
-                    Util.printMessage(String.format(RESULT_PATTERN, expression, simpleCalculator.execute(expression.trim())));
+                    Util.printMessage(String.format(RESULT_PATTERN, expression, calculator.execute(expression.trim())));
                 } catch (IllegalArgumentException e) {
                     Util.printMessage(e.getMessage());
                 }
