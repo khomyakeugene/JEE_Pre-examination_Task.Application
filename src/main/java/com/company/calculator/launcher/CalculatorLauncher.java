@@ -1,7 +1,6 @@
 package com.company.calculator.launcher;
 
 import com.company.calculator.library.Calculator;
-import com.company.calculator.library.SimpleCalculator;
 import com.company.util.Util;
 
 import java.util.Arrays;
@@ -21,15 +20,17 @@ public class CalculatorLauncher {
         this.calculator = calculator;
     }
 
+    private String[] operationCodeList() {
+        Set<String> operationCodeSet = calculator.operationCodeSet();
+
+        return operationCodeSet.toArray(new String[operationCodeSet.size()]);
+    }
+
     public void interactiveCalculation() {
         String expression;
 
-        Set<String> operationCodeSet = calculator.operationCodeSet();
-        String[] operationCodeList = operationCodeSet.toArray(new String[operationCodeSet.size()]);
-
         do {
-            expression = Util.readInputString(String.format(PROMPT_MESSAGE,
-                    Arrays.toString(operationCodeList)));
+            expression = Util.readInputString(String.format(PROMPT_MESSAGE, Arrays.toString(operationCodeList())));
             if (!expression.isEmpty()) {
                 try {
                     Util.printMessage(String.format(RESULT_PATTERN, expression, calculator.execute(expression.trim())));
