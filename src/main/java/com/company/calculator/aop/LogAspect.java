@@ -15,7 +15,8 @@ public class LogAspect {
     private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
     private long lastMethodExecutionNanoTime;
     private static final String RESOURCE_LOG_MASK =
-            "execution (public * com.company.calculator.library..*(..)) && " +
+            "(execution (public * com.company.calculator.library..*(..)) || " +
+                    "execution (public * com.company.calculator.launcher..*(..))) && " +
                     "!execution(* com.company.calculator.library.Operation.getOperationCode()) &&" +
                     "!execution(* com.company.calculator.library.Calculator.operationCodeSet())";
 
