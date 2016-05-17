@@ -43,7 +43,8 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                // return resultSet.getInt(1);
+                throw new RuntimeException("test");
             } else  {
                 throw new RuntimeException(String.format(CANNOT_GET_LAST_GENERATED_CALCULATION_DATA_ID_PATTERN,
                         protocolId, expression, result, executionTime));
@@ -54,7 +55,7 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
     }
 
     @Override
-    @Transactional (propagation = Propagation.MANDATORY)
+    @Transactional (propagation = Propagation.REQUIRED)
     public int storeCalculationData(int eventId, String expression, String result, long executionTime) {
         return storeCalculationDataRecord(storeProtocolRecord(eventId, expression, result), expression, result,
                 executionTime);
