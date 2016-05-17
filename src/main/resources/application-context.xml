@@ -8,6 +8,8 @@
                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+
     <bean class="com.company.calculator.launcher.NumberMultiplicationOperation" id="numberMultiplicationOperation">
         <property name="operationCode" value="*"/>
         <property name="rank" value="100"/>
@@ -93,7 +95,6 @@
         <property name="acquireIncrement" value="${jdc.acquire.increment}"/>
     </bean>
 
-    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
@@ -109,11 +110,16 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="jdbcProtocolDao" ref="protocolDao"/>
     </bean>
+
+    <bean class="com.company.calculator.controllers.CalculationDataController" id="calculationDataController">
+        <property name="txManager" ref="txManager"/>
+        <property name="calculationDataDao" ref="calculationDataDao"/>
+    </bean>
     <!-- END OF DB-CONTEXT -->
 
     <!-- AOP-CONTEXT, , intentionally do not exclude from here and store in the separate context-file such as "aop-context.xml" -->
     <bean id="logAspect" class="com.company.calculator.aop.LogAspect">
-        <property name="jdbcCalculationDataDao" ref="calculationDataDao"/>
+        <property name="calculationDataController" ref="calculationDataController"/>
     </bean>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <!-- END OF AOP-CONTEXT -->

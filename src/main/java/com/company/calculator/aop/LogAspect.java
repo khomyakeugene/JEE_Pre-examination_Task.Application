@@ -1,5 +1,6 @@
 package com.company.calculator.aop;
 
+import com.company.calculator.controllers.CalculationDataController;
 import com.company.calculator.model.jdbc.JdbcCalculationDataDao;
 import com.company.util.Util;
 import org.aspectj.lang.JoinPoint;
@@ -30,10 +31,10 @@ public class LogAspect {
     private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
     private long lastMethodExecutionNanoTime;
 
-    private JdbcCalculationDataDao jdbcCalculationDataDao;
+    private CalculationDataController calculationDataController;
 
-    public void setJdbcCalculationDataDao(JdbcCalculationDataDao jdbcCalculationDataDao) {
-        this.jdbcCalculationDataDao = jdbcCalculationDataDao;
+    public void setCalculationDataController(CalculationDataController calculationDataController) {
+        this.calculationDataController = calculationDataController;
     }
 
     @Before(RESOURCE_LOG_ALL_MASK)
@@ -66,7 +67,7 @@ public class LogAspect {
     public void onAfterReturningCalculatorExecute(JoinPoint joinPoint, Object result) throws Throwable {
         Object[] parameterValues = joinPoint.getArgs();
 
-        jdbcCalculationDataDao.storeCalculationSuccess(parameterValues[0].toString(), result.toString(),
+        calculationDataController.storeCalculationSuccess(parameterValues[0].toString(), result.toString(),
                 Util.nanoToMicroTime(lastMethodExecutionNanoTime));
     }
 
@@ -74,7 +75,7 @@ public class LogAspect {
     public void onAfterThrowingCalculatorExecute(JoinPoint joinPoint, Throwable throwable) {
         Object[] parameterValues = joinPoint.getArgs();
 
-        jdbcCalculationDataDao.storeCalculationError(parameterValues[0].toString(), throwable.getMessage(),
+        calculationDataController.storeCalculationError(parameterValues[0].toString(), throwable.getMessage(),
                 Util.nanoToMicroTime(lastMethodExecutionNanoTime));
     }
 }
