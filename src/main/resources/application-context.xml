@@ -10,16 +10,6 @@
 
     <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
 
-    <bean class="com.company.calculator.launcher.NumberMultiplicationOperation" id="numberMultiplicationOperation">
-        <property name="operationCode" value="*"/>
-        <property name="rank" value="100"/>
-    </bean>
-
-    <bean class="com.company.calculator.launcher.NumberDividingOperation" id="numberDividingOperation">
-        <property name="operationCode" value="/"/>
-        <property name="rank" value="100"/>
-    </bean>
-
     <bean class="com.company.calculator.launcher.SquareRootOperation" id="squareRootOperation">
         <property name="operationCode" value="sqrt"/>
         <property name="rank" value="200"/>
@@ -63,8 +53,6 @@
     <bean class="com.company.calculator.library.SimpleCalculator" id="simpleCalculator">
         <property name="operationList">
             <list value-type="com.company.calculator.library.Operation">
-                <ref bean="numberMultiplicationOperation"/>
-                <ref bean="numberDividingOperation"/>
                 <ref bean="squareRootOperation"/>
                 <ref bean="log10Operation"/>
                 <ref bean="logOperation"/>
