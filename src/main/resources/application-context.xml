@@ -104,6 +104,7 @@
 
     <bean class="com.company.calculator.model.jdbc.JdbcCalculationDataDao" id="calculationDataDao">
         <property name="dataSource" ref="dataSource"/>
+        <property name="jdbcProtocolDao" ref="protocolDao"/>
     </bean>
     <!-- END OF DB-CONTEXT -->
 

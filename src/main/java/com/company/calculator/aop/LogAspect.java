@@ -4,7 +4,6 @@ import com.company.calculator.model.jdbc.JdbcCalculationDataDao;
 import com.company.util.Util;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.aspectj.lang.reflect.MethodSignature;
 
 import java.util.ArrayDeque;
 
@@ -18,7 +17,9 @@ public class LogAspect {
     private long lastMethodExecutionNanoTime;
     private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
             "(execution(* com.company.calculator.library.Calculator.execute(..)))";
-    private static final String RESOURCE_LOG_INFO_MASK = RESOURCE_LOG_CALCULATOR_EXECUTE_MASK;
+    private static final String RESOURCE_LOG_MODEL_MASK =
+            "(execution (public * com.company.calculator.model..*(..)))";
+    private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
     private static final String RESOURCE_LOG_DEBUG_MASK =
             "(execution (public * com.company.calculator.library..*(..)) || " +
                     "execution (public * com.company.calculator.launcher..*(..))) && " +

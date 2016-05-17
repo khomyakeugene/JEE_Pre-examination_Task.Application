@@ -15,13 +15,10 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
 
     private static final String PROTOCOL_MESSAGE_PATTERN = "%s = %s";
 
-    private JdbcProtocolDao jdbcProtocolDao = new JdbcProtocolDao();
+    private JdbcProtocolDao jdbcProtocolDao;
 
-    @Override
-    public void setDataSource(DataSource dataSource) {
-        super.setDataSource(dataSource);
-
-        jdbcProtocolDao.setDataSource(dataSource);
+    public void setJdbcProtocolDao(JdbcProtocolDao jdbcProtocolDao) {
+        this.jdbcProtocolDao = jdbcProtocolDao;
     }
 
     @Override
