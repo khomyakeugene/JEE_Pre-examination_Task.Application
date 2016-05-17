@@ -54,7 +54,7 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
     }
 
     @Override
-    @Transactional (propagation = Propagation.MANDATORY)
+    @Transactional (propagation = Propagation.REQUIRED)
     public int storeCalculationData(int eventId, String expression, String result, long executionTime) {
         return storeCalculationDataRecord(storeProtocolRecord(eventId, expression, result), expression, result,
                 executionTime);

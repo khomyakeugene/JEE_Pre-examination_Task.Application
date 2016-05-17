@@ -20,7 +20,6 @@ public class CalculationDataController {
         this.calculationDataDao = calculationDataDao;
     }
 
-    // @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int storeCalculationSuccess(String expression, String result, long executionTime) {
         return calculationDataDao.storeCalculationSuccess(expression, result, executionTime);
     }
