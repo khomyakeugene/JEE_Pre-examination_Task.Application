@@ -35,7 +35,6 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
     private int storeCalculationDataRecord(int protocolId, String expression, String result, long executionTime) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
-
             preparedStatement.setInt(1, protocolId);
             preparedStatement.setString(2, expression);
             preparedStatement.setString(3, result);

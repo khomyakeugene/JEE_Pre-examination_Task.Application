@@ -33,7 +33,6 @@ public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
     public int insert(int userId, int eventId, String description) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
-
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, eventId);
             preparedStatement.setString(3, description);
