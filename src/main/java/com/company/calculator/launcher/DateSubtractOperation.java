@@ -1,6 +1,7 @@
 package com.company.calculator.launcher;
 
 import com.company.calculator.library.Operation;
+import com.company.calculator.library.OperatorType;
 import com.company.calculator.library.ParseResult;
 import com.company.util.Util;
 
@@ -31,5 +32,10 @@ public class DateSubtractOperation extends DateOperation implements Operation {
         }
 
         return result;
+    }
+
+    @Override
+    public OperatorType operatorType() {
+        return OperatorType.BINARY;
     }
 }

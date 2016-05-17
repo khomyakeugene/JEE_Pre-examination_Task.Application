@@ -1,6 +1,7 @@
 package com.company.calculator.launcher;
 
 import com.company.calculator.library.Operation;
+import com.company.calculator.library.OperatorType;
 import com.company.util.Util;
 
 import java.util.Date;
@@ -40,5 +41,10 @@ public class DateAdditionOperation extends DateOperation implements Operation {
     @Override
     protected Date calculate() {
         return  Util.dateAdd(dateOperand, daysOperand);
+    }
+
+    @Override
+    public OperatorType operatorType() {
+        return OperatorType.BINARY;
     }
 }

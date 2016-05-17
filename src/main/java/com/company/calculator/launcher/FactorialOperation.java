@@ -20,4 +20,9 @@ public class FactorialOperation extends UnaryIntegerOperation implements Operati
         return super.isThisOperation(inputExpression, parseResult) &&
                 (parseResult.operatorType() == OperatorType.POSTFIX_UNARY);
     }
+
+    @Override
+    public OperatorType operatorType() {
+        return OperatorType.POSTFIX_UNARY;
+    }
 }

@@ -21,6 +21,7 @@ public class LogAspect {
     private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
             "!(execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
             "execution(* com.company.calculator.library.Operation.getRank()) || " +
+            "execution(* com.company.calculator.library.Operation.operatorType()) || " +
             "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
 
     private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
