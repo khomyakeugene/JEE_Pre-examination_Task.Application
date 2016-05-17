@@ -7,5 +7,4 @@ public interface UserDicDao {
     int getUserIdByName(String userName);
 
     int getCurrentUserId();
-
 }

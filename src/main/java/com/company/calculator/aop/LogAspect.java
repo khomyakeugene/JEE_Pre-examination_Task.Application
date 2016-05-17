@@ -69,7 +69,7 @@ public class LogAspect {
     public void onAfterThrowingCalculatorExecute(JoinPoint joinPoint, Throwable throwable) {
         Object[] parameterValues = joinPoint.getArgs();
 
-        jdbcCalculationDataDao.storeCalculationSuccess(parameterValues[0].toString(), throwable.getMessage(),
+        jdbcCalculationDataDao.storeCalculationError(parameterValues[0].toString(), throwable.getMessage(),
                 Util.nanoToMicroTime(lastMethodExecutionNanoTime));
     }
 }
