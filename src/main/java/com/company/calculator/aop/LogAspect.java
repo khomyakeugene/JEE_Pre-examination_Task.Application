@@ -20,11 +20,12 @@ public class LogAspect {
     private static final String RESOURCE_LOG_MODEL_MASK =
             "(execution (public * com.company.calculator.model..*(..)))";
     private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
-    private static final String RESOURCE_LOG_DEBUG_MASK =
+    private static final String RESOURCE_LOG_ALL_MASK =
             "(execution (public * com.company.calculator.library..*(..)) || " +
                     "execution (public * com.company.calculator.launcher..*(..))) && " +
                     "!execution(* com.company.calculator.library.Operation.getOperationCode()) &&" +
                     "!execution(* com.company.calculator.library.Calculator.operationCodeSet())";
+    private static final String RESOURCE_LOG_DEBUG_MASK = RESOURCE_LOG_ALL_MASK + "&& !" + RESOURCE_LOG_INFO_MASK;
 
     private JdbcCalculationDataDao jdbcCalculationDataDao;
 
@@ -32,17 +33,17 @@ public class LogAspect {
         this.jdbcCalculationDataDao = jdbcCalculationDataDao;
     }
 
-    @Before(RESOURCE_LOG_DEBUG_MASK)
+    @Before(RESOURCE_LOG_ALL_MASK)
     public void onBefore(JoinPoint joinPoint) throws Throwable {
         startTimeStack.push(Util.getNanoTime());
     }
 
-    @After(RESOURCE_LOG_DEBUG_MASK)
+    @After(RESOURCE_LOG_ALL_MASK)
     public void onAfter(JoinPoint joinPoint) throws Throwable {
         lastMethodExecutionNanoTime = (Util.getNanoTime() - startTimeStack.pop());
     }
 
-    @AfterReturning(pointcut = RESOURCE_LOG_DEBUG_MASK + "&& !" + RESOURCE_LOG_INFO_MASK, returning = "result")
+    @AfterReturning(pointcut = RESOURCE_LOG_DEBUG_MASK, returning = "result")
     public void onAfterReturningDebug(JoinPoint joinPoint, Object result) throws Throwable {
         AOPLogger.debug(joinPoint, result, lastMethodExecutionNanoTime);
     }
@@ -52,7 +53,7 @@ public class LogAspect {
         AOPLogger.info(joinPoint, result, lastMethodExecutionNanoTime);
     }
 
-    @AfterThrowing(pointcut = RESOURCE_LOG_DEBUG_MASK, throwing = "throwable")
+    @AfterThrowing(pointcut = RESOURCE_LOG_ALL_MASK, throwing = "throwable")
     public void onAfterThrowing(JoinPoint joinPoint, Throwable throwable) {
         AOPLogger.error(joinPoint, throwable, lastMethodExecutionNanoTime);
     }

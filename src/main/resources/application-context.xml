@@ -98,10 +98,13 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean class="com.company.calculator.model.jdbc.JdbcProtocolDao" id="protocolDao">
+    <bean class="com.company.calculator.model.jdbc.JdbcUserDicDao" id="userDicDao">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-
+    <bean class=" com.company.calculator.model.jdbc.JdbcProtocolDao" id="protocolDao">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jdbcUserDicDao" ref="userDicDao"/>
+    </bean>
     <bean class="com.company.calculator.model.jdbc.JdbcCalculationDataDao" id="calculationDataDao">
         <property name="dataSource" ref="dataSource"/>
         <property name="jdbcProtocolDao" ref="protocolDao"/>
