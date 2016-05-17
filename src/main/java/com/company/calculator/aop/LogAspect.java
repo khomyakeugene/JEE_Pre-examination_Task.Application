@@ -20,6 +20,7 @@ public class LogAspect {
             "(execution (public * com.company.calculator.model..*(..)))";
     private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
             "!(execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
+            "execution(* com.company.calculator.library.Operation.getRank()) || " +
             "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
 
     private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
