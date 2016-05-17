@@ -2,15 +2,14 @@ package com.company.calculator.model.jdbc;
 
 import com.company.calculator.model.ProtocolDao;
 
-import javax.sql.DataSource;
 import java.sql.*;
 
 /**
  * Created by Yevhen on 16.05.2016.
  */
 public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
-    private static final String CANNOT_GET_LAST_GENERATED_PROTOCOL_PATTERN =
-            "Cannot get last generated <protocol.protocol_id> (user_id = %d, event_id = %d, description = %s)";
+    private static final String CANNOT_GET_LAST_GENERATED_PROTOCOL_ID_PATTERN =
+            "Cannot get last generated <protocol.protocol_id> (user_id = %d, event_id = %d, description = \"%s\")";
     private static final String SQL_INSERT_QUERY =
             "INSERT INTO protocol (user_id, event_id, description) VALUES (?, ?, ?)";
 
@@ -43,7 +42,7 @@ public class JdbcProtocolDao extends JdbcDao implements ProtocolDao {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             } else  {
-                throw new RuntimeException(String.format(CANNOT_GET_LAST_GENERATED_PROTOCOL_PATTERN,
+                throw new RuntimeException(String.format(CANNOT_GET_LAST_GENERATED_PROTOCOL_ID_PATTERN,
                         userId, eventId, description));
             }
         } catch (SQLException e) {

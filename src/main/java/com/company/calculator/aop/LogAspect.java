@@ -13,19 +13,22 @@ import java.util.ArrayDeque;
 
 @Aspect
 public class LogAspect {
-    private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
-    private long lastMethodExecutionNanoTime;
     private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
             "(execution(* com.company.calculator.library.Calculator.execute(..)))";
     private static final String RESOURCE_LOG_MODEL_MASK =
             "(execution (public * com.company.calculator.model..*(..)))";
+    private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
+            "!(execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
+            "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
+
     private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
     private static final String RESOURCE_LOG_ALL_MASK =
             "(execution (public * com.company.calculator.library..*(..)) || " +
-                    "execution (public * com.company.calculator.launcher..*(..))) && " +
-                    "!execution(* com.company.calculator.library.Operation.getOperationCode()) &&" +
-                    "!execution(* com.company.calculator.library.Calculator.operationCodeSet())";
+                    "execution (public * com.company.calculator.launcher..*(..))) && " + RESOURCE_LOG_EXCLUDE_MASK;
     private static final String RESOURCE_LOG_DEBUG_MASK = RESOURCE_LOG_ALL_MASK + "&& !" + RESOURCE_LOG_INFO_MASK;
+
+    private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
+    private long lastMethodExecutionNanoTime;
 
     private JdbcCalculationDataDao jdbcCalculationDataDao;
 

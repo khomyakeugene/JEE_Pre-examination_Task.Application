@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.*;
 
 /**
  * Created by Yevhen on 16.05.2016.
@@ -12,6 +13,12 @@ import javax.sql.DataSource;
 public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDao {
     private static final int SUCCESSFUL_EXPRESSION_VALUE_CALCULATION_EVENT_ID = 4;
     private static final int ERROR_WHILE_TRYING_TO_CALCULATE_EXPRESSION_VALUE_EVENT_ID = 5;
+
+    private static final String CANNOT_GET_LAST_GENERATED_CALCULATION_DATA_ID_PATTERN =
+            "Cannot get last generated <calculation_data.calculation_data_id> (protocol_id = %d, expression = \"%s\", " +
+                    "result = \"%s\", microsecs_execution_time = %d)";
+    private static final String SQL_INSERT_QUERY =
+            "INSERT INTO calculation_data (protocol_id, expression, result, microsecs_execution_time) VALUES (?, ?, ?, ?)";
 
     private static final String PROTOCOL_MESSAGE_PATTERN = "%s = %s";
 
@@ -21,15 +28,36 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
         this.jdbcProtocolDao = jdbcProtocolDao;
     }
 
+    private int storeProtocolRecord(int eventId, String expression, String result) {
+        return jdbcProtocolDao.insert(eventId, String.format(PROTOCOL_MESSAGE_PATTERN, expression, result));
+    }
+
+    private int storeCalculationDataRecord(int protocolId, String expression, String result, long executionTime) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setInt(1, protocolId);
+            preparedStatement.setString(2, expression);
+            preparedStatement.setString(3, result);
+            preparedStatement.setLong(4, executionTime);
+            preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            } else  {
+                throw new RuntimeException(String.format(CANNOT_GET_LAST_GENERATED_CALCULATION_DATA_ID_PATTERN,
+                        protocolId, expression, result, executionTime));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
-    @Transactional (propagation = Propagation.REQUIRED)
+    @Transactional (propagation = Propagation.MANDATORY)
     public int storeCalculationData(int eventId, String expression, String result, long executionTime) {
-        // Store protocol event
-        int protocolId = jdbcProtocolDao.insert(eventId, String.format(PROTOCOL_MESSAGE_PATTERN, expression, result));
-
-        // Store calculation data
-
-        return 0;
+        return storeCalculationDataRecord(storeProtocolRecord(eventId, expression, result), expression, result,
+                executionTime);
     }
 
     @Override
