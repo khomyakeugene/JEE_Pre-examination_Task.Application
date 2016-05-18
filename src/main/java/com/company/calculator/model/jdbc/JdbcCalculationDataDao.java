@@ -1,10 +1,10 @@
 package com.company.calculator.model.jdbc;
 
 import com.company.calculator.model.CalculationDataDao;
+import com.company.calculator.model.ProtocolDao;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -22,14 +22,14 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
 
     private static final String PROTOCOL_MESSAGE_PATTERN = "%s = %s";
 
-    private JdbcProtocolDao jdbcProtocolDao;
+    private ProtocolDao protocolDao;
 
-    public void setJdbcProtocolDao(JdbcProtocolDao jdbcProtocolDao) {
-        this.jdbcProtocolDao = jdbcProtocolDao;
+    public void setProtocolDao(JdbcProtocolDao protocolDao) {
+        this.protocolDao = protocolDao;
     }
 
     private int storeProtocolRecord(int eventId, String expression, String result) {
-        return jdbcProtocolDao.insert(eventId, String.format(PROTOCOL_MESSAGE_PATTERN, expression, result));
+        return protocolDao.insertRecord(eventId, String.format(PROTOCOL_MESSAGE_PATTERN, expression, result));
     }
 
     private int storeCalculationDataRecord(int protocolId, String expression, String result, long executionTime) {

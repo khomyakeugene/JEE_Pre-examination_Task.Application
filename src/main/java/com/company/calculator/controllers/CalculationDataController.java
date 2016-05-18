@@ -1,6 +1,7 @@
 package com.company.calculator.controllers;
 
 import com.company.calculator.model.CalculationDataDao;
+import com.company.calculator.model.ProtocolDao;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CalculationDataController {
     private PlatformTransactionManager txManager;
     private CalculationDataDao calculationDataDao;
+    private ProtocolDao protocolDao;
 
     public void setTxManager(PlatformTransactionManager txManager) {
         this.txManager = txManager;
@@ -18,6 +20,18 @@ public class CalculationDataController {
 
     public void setCalculationDataDao(CalculationDataDao calculationDataDao) {
         this.calculationDataDao = calculationDataDao;
+    }
+
+    public void setProtocolDao(ProtocolDao protocolDao) {
+        this.protocolDao = protocolDao;
+    }
+
+    public int storeConnectEvent() {
+        return protocolDao.storeConnectEvent();
+    }
+
+    public int storeDisconnectEvent() {
+        return protocolDao.storeDisconnectEvent();
     }
 
     public int storeCalculationSuccess(String expression, String result, long executionTime) {

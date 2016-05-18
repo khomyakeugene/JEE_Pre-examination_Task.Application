@@ -65,7 +65,8 @@
         </property>
     </bean>
 
-    <bean class="com.company.calculator.launcher.CalculatorLauncher" id="calculatorLauncher">
+    <bean class="com.company.calculator.launcher.CalculatorLauncher" id="calculatorLauncher"
+          init-method="init">
         <property name="calculator" ref="simpleCalculator"/>
     </bean>
 
@@ -92,15 +93,16 @@
     </bean>
     <bean class=" com.company.calculator.model.jdbc.JdbcProtocolDao" id="protocolDao">
         <property name="dataSource" ref="dataSource"/>
-        <property name="jdbcUserDicDao" ref="userDicDao"/>
+        <property name="userDicDao" ref="userDicDao"/>
     </bean>
     <bean class="com.company.calculator.model.jdbc.JdbcCalculationDataDao" id="calculationDataDao">
         <property name="dataSource" ref="dataSource"/>
-        <property name="jdbcProtocolDao" ref="protocolDao"/>
+        <property name="protocolDao" ref="protocolDao"/>
     </bean>
 
     <bean class="com.company.calculator.controllers.CalculationDataController" id="calculationDataController">
         <property name="txManager" ref="txManager"/>
+        <property name="protocolDao" ref="protocolDao"/>
         <property name="calculationDataDao" ref="calculationDataDao"/>
     </bean>
     <!-- END OF DB-CONTEXT -->
