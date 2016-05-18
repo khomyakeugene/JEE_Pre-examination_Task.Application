@@ -16,6 +16,8 @@ import java.util.ArrayDeque;
 public class LogAspect {
     private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
             "(execution(* com.company.calculator.library.Calculator.execute(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
+            "(execution (public * com.company.calculator.launcher..*(..)))";
     private static final String RESOURCE_LOG_MODEL_MASK =
             "(execution (public * com.company.calculator.model..*(..)))";
     private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
@@ -24,7 +26,8 @@ public class LogAspect {
             "execution(* com.company.calculator.library.Operation.operatorType()) || " +
             "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
 
-    private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + ")";
+    private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + "||" +
+            RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK + ")";
     private static final String RESOURCE_LOG_ALL_MASK =
             "(execution (public * com.company.calculator.library..*(..)) || " +
                     "execution (public * com.company.calculator.launcher..*(..))) && " + RESOURCE_LOG_EXCLUDE_MASK;
