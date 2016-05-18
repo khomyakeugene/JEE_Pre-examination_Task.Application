@@ -26,12 +26,12 @@
     </bean>
 
     <bean class="com.company.calculator.launcher.IncrementOperation" id="incrementOperation">
-        <property name="operationCode" value="++"/>
+        <property name="operationCode" value="inc"/>
         <property name="rank" value="200"/>
     </bean>
 
     <bean class="com.company.calculator.launcher.DecrementOperation" id="decrementOperation">
-        <property name="operationCode" value="--"/>
+        <property name="operationCode" value="dec"/>
         <property name="rank" value="200"/>
     </bean>
 
