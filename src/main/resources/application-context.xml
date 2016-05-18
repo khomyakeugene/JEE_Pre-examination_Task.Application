@@ -65,8 +65,7 @@
         </property>
     </bean>
 
-    <bean class="com.company.calculator.launcher.CalculatorLauncher" id="calculatorLauncher"
-          init-method="init">
+    <bean class="com.company.calculator.launcher.CalculatorLauncher" id="calculatorLauncher">
         <property name="calculator" ref="simpleCalculator"/>
     </bean>
 

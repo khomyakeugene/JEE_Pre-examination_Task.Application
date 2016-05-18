@@ -13,25 +13,29 @@ import java.util.HashMap;
 
 @Aspect
 public class LogAspect {
-    private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
-            "!(execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
+    private static final String RESOURCE_LOG_EXCLUDE_MASK = "!(" +
+            "execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
             "execution(* com.company.calculator.library.Operation.setOperationCode(..)) || " +
             "execution(* com.company.calculator.library.Operation.getRank()) || " +
             "execution(* com.company.calculator.library.Operation.setRank(..)) || " +
             "execution(* com.company.calculator.library.Operation.operatorType()) || " +
             "execution(* com.company.calculator.library.Calculator.setParser(..)) || " +
             "execution(* com.company.calculator.library.Calculator.setOperationList(..)) || " +
-            "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
+            "execution(* com.company.calculator.library.Calculator.operationCodeSet()) || " +
+            "execution(* com.company.calculator.launcher.CalculatorLauncher.setCalculator(..))" +
+            ")";
     private static final String RESOURCE_LOG_CALCULATOR_LIBRARY_MASK =
-            "(execution (public * com.company.calculator.library..*(..)))";
+            "(execution (* com.company.calculator.library..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
-            "(execution (public * com.company.calculator.launcher..*(..)))";
+            "(execution (* com.company.calculator.launcher..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_MODEL_MASK =
-            "(execution (public * com.company.calculator.model..*(..)))";
+            "(execution (* com.company.calculator.model..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
-            "(execution(* com.company.calculator.library.Calculator.execute(..)))";
+            "(execution (* com.company.calculator.library.Calculator.execute(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_INTERACTIVE_CALCULATION_MASK =
+            "(execution (* com.company.calculator.launcher.CalculatorLauncher.interactiveCalculation()))";
     private static final String RESOURCE_LOG_ALL_MASK =
-            "(execution(* com.company..*(..)))" + " && " + RESOURCE_LOG_EXCLUDE_MASK;
+            "(execution (* com.company..*(..)))" + " && " + RESOURCE_LOG_EXCLUDE_MASK;
     private static final String RESOURCE_LOG_INFO_MASK = "(" +
             RESOURCE_LOG_CALCULATOR_LIBRARY_MASK + "||" +
             RESOURCE_LOG_CALCULATOR_MODEL_MASK + "||" +
@@ -92,7 +96,6 @@ public class LogAspect {
         AOPLogger.error(joinPoint, throwable, methodExecutionTime(joinPoint));
     }
 
-
     @AfterReturning(pointcut = RESOURCE_LOG_CALCULATOR_EXECUTE_MASK, returning = "result")
     public void onAfterReturningCalculatorExecute(JoinPoint joinPoint, Object result) throws Throwable {
         Object[] parameterValues = joinPoint.getArgs();
@@ -107,5 +110,15 @@ public class LogAspect {
 
         calculationDataController.storeCalculationError(parameterValues[0].toString(), throwable.getMessage(),
                 Util.nanoToMicroTime(methodExecutionTime(joinPoint)));
+    }
+
+    @Before(RESOURCE_LOG_CALCULATOR_LAUNCHER_INTERACTIVE_CALCULATION_MASK)
+    public void onBeforeInteractiveCalculation(JoinPoint joinPoint) throws Throwable {
+        calculationDataController.storeConnectEvent();
+    }
+
+    @After(RESOURCE_LOG_CALCULATOR_LAUNCHER_INTERACTIVE_CALCULATION_MASK)
+    public void onAfterInteractiveCalculation(JoinPoint joinPoint) throws Throwable {
+        calculationDataController.storeDisconnectEvent();
     }
 }

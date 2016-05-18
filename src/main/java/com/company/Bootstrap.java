@@ -12,6 +12,7 @@ public class Bootstrap {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_NAME);
         CalculatorLauncher calculatorLauncher = context.getBean(CALCULATOR_LAUNCHER_BEAN_NAME, CalculatorLauncher.class);
+        //calculatorLauncher.init();
         calculatorLauncher.interactiveCalculation();
     }
 }
