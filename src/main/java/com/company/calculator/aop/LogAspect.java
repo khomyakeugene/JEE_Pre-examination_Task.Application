@@ -1,12 +1,11 @@
 package com.company.calculator.aop;
 
 import com.company.calculator.controllers.CalculationDataController;
-import com.company.calculator.model.jdbc.JdbcCalculationDataDao;
 import com.company.util.Util;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 
-import java.util.ArrayDeque;
+import java.util.HashMap;
 
 /**
  * Created by Yevhen on 26.04.2016.
@@ -14,27 +13,33 @@ import java.util.ArrayDeque;
 
 @Aspect
 public class LogAspect {
-    private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
-            "(execution(* com.company.calculator.library.Calculator.execute(..)))";
-    private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
-            "(execution (public * com.company.calculator.launcher..*(..)))";
-    private static final String RESOURCE_LOG_MODEL_MASK =
-            "(execution (public * com.company.calculator.model..*(..)))";
     private static final String RESOURCE_LOG_EXCLUDE_MASK = "" +
             "!(execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
+            "execution(* com.company.calculator.library.Operation.setOperationCode(..)) || " +
             "execution(* com.company.calculator.library.Operation.getRank()) || " +
+            "execution(* com.company.calculator.library.Operation.setRank(..)) || " +
             "execution(* com.company.calculator.library.Operation.operatorType()) || " +
+            "execution(* com.company.calculator.library.Calculator.setParser(..)) || " +
+            "execution(* com.company.calculator.library.Calculator.setOperationList(..)) || " +
             "execution(* com.company.calculator.library.Calculator.operationCodeSet()))";
-
-    private static final String RESOURCE_LOG_INFO_MASK = "(" + RESOURCE_LOG_CALCULATOR_EXECUTE_MASK + "||" + RESOURCE_LOG_MODEL_MASK + "||" +
-            RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK + ")";
+    private static final String RESOURCE_LOG_CALCULATOR_LIBRARY_MASK =
+            "(execution (public * com.company.calculator.library..*(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
+            "(execution (public * com.company.calculator.launcher..*(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_MODEL_MASK =
+            "(execution (public * com.company.calculator.model..*(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
+            "(execution(* com.company.calculator.library.Calculator.execute(..)))";
     private static final String RESOURCE_LOG_ALL_MASK =
-            "(execution (public * com.company.calculator.library..*(..)) || " +
-                    "execution (public * com.company.calculator.launcher..*(..))) && " + RESOURCE_LOG_EXCLUDE_MASK;
+            "(execution(* com.company..*(..)))" + " && " + RESOURCE_LOG_EXCLUDE_MASK;
+    private static final String RESOURCE_LOG_INFO_MASK = "(" +
+            RESOURCE_LOG_CALCULATOR_LIBRARY_MASK + "||" +
+            RESOURCE_LOG_CALCULATOR_MODEL_MASK + "||" +
+            RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK + ")" +
+            " && " + RESOURCE_LOG_EXCLUDE_MASK;
     private static final String RESOURCE_LOG_DEBUG_MASK = RESOURCE_LOG_ALL_MASK + "&& !" + RESOURCE_LOG_INFO_MASK;
 
-    private ArrayDeque<Long> startTimeStack = new ArrayDeque<>();
-    private long lastMethodExecutionNanoTime;
+    private HashMap<String, Long> executionTimeMap = new HashMap<>();
 
     private CalculationDataController calculationDataController;
 
@@ -42,29 +47,49 @@ public class LogAspect {
         this.calculationDataController = calculationDataController;
     }
 
+    private String methodFullName(JoinPoint joinPoint) {
+        return AOPLogger.methodFullName(joinPoint);
+    }
+
+    private Long methodExecutionTime(JoinPoint joinPoint) {
+        return executionTimeMap.get(methodFullName(joinPoint));
+    }
+
     @Before(RESOURCE_LOG_ALL_MASK)
     public void onBefore(JoinPoint joinPoint) throws Throwable {
-        startTimeStack.push(Util.getNanoTime());
+        // Calculate all temporary data beforehand of <before time> fixing because of needful precision of <before time>
+        String methodFullName = methodFullName(joinPoint);
+        // Store <before time>
+        executionTimeMap.put(methodFullName, Util.getNanoTime());
     }
 
     @After(RESOURCE_LOG_ALL_MASK)
     public void onAfter(JoinPoint joinPoint) throws Throwable {
-        lastMethodExecutionNanoTime = (Util.getNanoTime() - startTimeStack.pop());
+        // Fix <after time> (before of all other calculation)
+        Long afterTime = Util.getNanoTime();
+        // Get <full method name>
+        String methodFullName = methodFullName(joinPoint);
+        // Get <before time>
+        Long beforeTime = executionTimeMap.get(methodFullName);
+        // Store execution time for this method
+        if (beforeTime != null) {
+            executionTimeMap.put(methodFullName, afterTime - beforeTime);
+        }
     }
 
     @AfterReturning(pointcut = RESOURCE_LOG_DEBUG_MASK, returning = "result")
     public void onAfterReturningDebug(JoinPoint joinPoint, Object result) throws Throwable {
-        AOPLogger.debug(joinPoint, result, lastMethodExecutionNanoTime);
+        AOPLogger.debug(joinPoint, result, methodExecutionTime(joinPoint));
     }
 
     @AfterReturning(pointcut = RESOURCE_LOG_INFO_MASK, returning = "result")
     public void onAfterReturningInfo(JoinPoint joinPoint, Object result) throws Throwable {
-        AOPLogger.info(joinPoint, result, lastMethodExecutionNanoTime);
+        AOPLogger.info(joinPoint, result, methodExecutionTime(joinPoint));
     }
 
     @AfterThrowing(pointcut = RESOURCE_LOG_ALL_MASK, throwing = "throwable")
     public void onAfterThrowing(JoinPoint joinPoint, Throwable throwable) {
-        AOPLogger.error(joinPoint, throwable, lastMethodExecutionNanoTime);
+        AOPLogger.error(joinPoint, throwable, methodExecutionTime(joinPoint));
     }
 
 
@@ -73,7 +98,7 @@ public class LogAspect {
         Object[] parameterValues = joinPoint.getArgs();
 
         calculationDataController.storeCalculationSuccess(parameterValues[0].toString(), result.toString(),
-                Util.nanoToMicroTime(lastMethodExecutionNanoTime));
+                Util.nanoToMicroTime(methodExecutionTime(joinPoint)));
     }
 
     @AfterThrowing(pointcut = RESOURCE_LOG_CALCULATOR_EXECUTE_MASK, throwing = "throwable")
@@ -81,6 +106,6 @@ public class LogAspect {
         Object[] parameterValues = joinPoint.getArgs();
 
         calculationDataController.storeCalculationError(parameterValues[0].toString(), throwable.getMessage(),
-                Util.nanoToMicroTime(lastMethodExecutionNanoTime));
+                Util.nanoToMicroTime(methodExecutionTime(joinPoint)));
     }
 }

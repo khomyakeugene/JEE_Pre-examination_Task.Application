@@ -27,7 +27,7 @@ public class AOPLogger {
         return logger;
     }
 
-    private static String methodFullName(JoinPoint joinPoint) {
+    public static String methodFullName(JoinPoint joinPoint) {
         Signature signature = joinPoint.getSignature();
 
         return String.format("%s.%s", signature.getDeclaringTypeName(),
@@ -76,25 +76,28 @@ public class AOPLogger {
                 String.format("%s = %s", logMessage(joinPoint), methodResultRepresentation(joinPoint, result));
     }
 
-    private static String logMessage(JoinPoint joinPoint, Object result, long executionNanoTime) {
-        return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint, result),
+    private static String logMessageWithExecutionTime(String logMessage, Long executionNanoTime) {
+        return (executionNanoTime == null) ? logMessage : String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage,
                 Util.nanoToMicroTime(executionNanoTime));
     }
 
-    private static String logMessage(JoinPoint joinPoint, long executionNanoTime) {
-        return String.format(MESSAGE_EXECUTION_NANO_TIME_PATTERN, logMessage(joinPoint),
-                Util.nanoToMicroTime(executionNanoTime));
+    private static String logMessage(JoinPoint joinPoint, Object result, Long executionNanoTime) {
+        return logMessageWithExecutionTime(logMessage(joinPoint, result), executionNanoTime);
     }
 
-    public static void debug(JoinPoint joinPoint, Object result, long executionNanoTime) {
+    private static String logMessage(JoinPoint joinPoint, Long executionNanoTime) {
+        return logMessageWithExecutionTime(logMessage(joinPoint), executionNanoTime);
+    }
+
+    public static void debug(JoinPoint joinPoint, Object result, Long executionNanoTime) {
         getLogger().debug(logMessage(joinPoint, result, executionNanoTime));
     }
 
-    public static void info(JoinPoint joinPoint, Object result, long executionNanoTime) {
+    public static void info(JoinPoint joinPoint, Object result, Long executionNanoTime) {
         getLogger().info(logMessage(joinPoint, result, executionNanoTime));
     }
 
-    public static void error(JoinPoint joinPoint, Throwable throwable, long executionNanoTime) {
+    public static void error(JoinPoint joinPoint, Throwable throwable, Long executionNanoTime) {
         getLogger().error(logMessage(joinPoint, executionNanoTime), throwable);
     }
 }

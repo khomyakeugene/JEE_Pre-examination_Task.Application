@@ -32,13 +32,16 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
         return protocolDao.insertRecord(eventId, String.format(PROTOCOL_MESSAGE_PATTERN, expression, result));
     }
 
-    private int storeCalculationDataRecord(int protocolId, String expression, String result, long executionTime) {
+    private int storeCalculationDataRecord(int protocolId, String expression, String result, Long executionTime) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.clearParameters();
             preparedStatement.setInt(1, protocolId);
             preparedStatement.setString(2, expression);
             preparedStatement.setString(3, result);
-            preparedStatement.setLong(4, executionTime);
+            if (executionTime != null) {
+                preparedStatement.setLong(4, executionTime);
+            }
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -54,18 +57,18 @@ public class JdbcCalculationDataDao extends JdbcDao implements CalculationDataDa
 
     @Override
     @Transactional (propagation = Propagation.REQUIRED)
-    public int storeCalculationData(int eventId, String expression, String result, long executionTime) {
+    public int storeCalculationData(int eventId, String expression, String result, Long executionTime) {
         return storeCalculationDataRecord(storeProtocolRecord(eventId, expression, result), expression, result,
                 executionTime);
     }
 
     @Override
-    public int storeCalculationSuccess(String expression, String result, long executionTime) {
+    public int storeCalculationSuccess(String expression, String result, Long executionTime) {
         return storeCalculationData(SUCCESSFUL_EXPRESSION_VALUE_CALCULATION_EVENT_ID, expression, result, executionTime);
     }
 
     @Override
-    public int storeCalculationError(String expression, String result, long executionTime) {
+    public int storeCalculationError(String expression, String result, Long executionTime) {
         return storeCalculationData(ERROR_WHILE_TRYING_TO_CALCULATE_EXPRESSION_VALUE_EVENT_ID, expression, result,
                 executionTime);
     }

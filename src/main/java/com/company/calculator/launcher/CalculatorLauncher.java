@@ -47,6 +47,7 @@ public class CalculatorLauncher {
     public void init() {
         // Till now - empty method using just for the possibility to "hang" here the "aspect"-functionality, such as
         // fixation if user-login in the database. Probably, it is not the most method to inject the functionality,
-        // but let use this to support "common aspect" model approcah
+        // but let use this to support "common aspect" model approach
+        System.out.println(getClass().getName() + ".init");
     }
 }

@@ -1,8 +1,5 @@
 package com.company.util;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +7,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -104,8 +100,8 @@ public class Util {
         return System.nanoTime();
     }
 
-    public static long nanoToMicroTime(long nanoTime) {
-        return nanoTime / 1000;
+    public static Long nanoToMicroTime(Long nanoTime) {
+        return (nanoTime == null) ? null : (nanoTime / 1000);
     }
 
     public static String toString(Object object) {

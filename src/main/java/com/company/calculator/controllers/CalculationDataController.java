@@ -3,8 +3,6 @@ package com.company.calculator.controllers;
 import com.company.calculator.model.CalculationDataDao;
 import com.company.calculator.model.ProtocolDao;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Yevhen on 17.05.2016.
@@ -34,11 +32,11 @@ public class CalculationDataController {
         return protocolDao.storeDisconnectEvent();
     }
 
-    public int storeCalculationSuccess(String expression, String result, long executionTime) {
+    public int storeCalculationSuccess(String expression, String result, Long executionTime) {
         return calculationDataDao.storeCalculationSuccess(expression, result, executionTime);
     }
 
-    public int storeCalculationError(String expression, String result, long executionTime) {
+    public int storeCalculationError(String expression, String result, Long executionTime) {
         return calculationDataDao.storeCalculationError(expression, result, executionTime);
     }
 }
