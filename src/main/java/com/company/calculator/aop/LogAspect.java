@@ -13,17 +13,8 @@ import java.util.HashMap;
 
 @Aspect
 public class LogAspect {
-    private static final String RESOURCE_LOG_EXCLUDE_MASK = "!(" +
-            "execution(* com.company.calculator.library.Operation.getOperationCode()) || " +
-            "execution(* com.company.calculator.library.Operation.setOperationCode(..)) || " +
-            "execution(* com.company.calculator.library.Operation.getRank()) || " +
-            "execution(* com.company.calculator.library.Operation.setRank(..)) || " +
-            "execution(* com.company.calculator.library.Operation.operatorType()) || " +
-            "execution(* com.company.calculator.library.Calculator.setParser(..)) || " +
-            "execution(* com.company.calculator.library.Calculator.setOperationList(..)) || " +
-            "execution(* com.company.calculator.library.Calculator.operationCodeSet()) || " +
-            "execution(* com.company.calculator.launcher.CalculatorLauncher.setCalculator(..))" +
-            ")";
+    private static final String RESOURCE_LOG_EXCLUDE_MASK =
+            "!(execution(* get*(..)) || execution(* set*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_LIBRARY_MASK =
             "(execution (* com.company.calculator.library..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
