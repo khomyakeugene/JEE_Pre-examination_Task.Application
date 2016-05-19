@@ -28,9 +28,10 @@ public class CalculatorLauncher {
 
     public void interactiveCalculation() {
         String expression;
+        String prompt = String.format(PROMPT_MESSAGE, Arrays.toString(operationCodeList()));
 
         do {
-            expression = Util.readInputString(String.format(PROMPT_MESSAGE, Arrays.toString(operationCodeList())));
+            expression = Util.readInputString(prompt);
             if (!expression.isEmpty()) {
                 try {
                     Util.printMessage(String.format(RESULT_PATTERN, expression, calculator.execute(expression.trim())));

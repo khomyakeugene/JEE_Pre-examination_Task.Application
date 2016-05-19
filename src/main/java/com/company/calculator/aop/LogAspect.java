@@ -14,13 +14,16 @@ import java.util.HashMap;
 @Aspect
 public class LogAspect {
     private static final String RESOURCE_LOG_EXCLUDE_MASK =
-            "!(execution(* get*(..)) || execution(* set*(..)))";
+            "!(execution(* get*(..)) || execution(* set*(..)) || " +
+            "execution(* com.company.calculator.library.Operation.operatorType()))";
     private static final String RESOURCE_LOG_CALCULATOR_LIBRARY_MASK =
             "(execution (* com.company.calculator.library..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK =
             "(execution (* com.company.calculator.launcher..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_MODEL_MASK =
             "(execution (* com.company.calculator.model..*(..)))";
+    private static final String RESOURCE_LOG_CALCULATOR_CONTROLLERS_MASK =
+            "(execution (* com.company.calculator.controllers..*(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_EXECUTE_MASK =
             "(execution (* com.company.calculator.library.Calculator.execute(..)))";
     private static final String RESOURCE_LOG_CALCULATOR_LAUNCHER_INTERACTIVE_CALCULATION_MASK =
@@ -30,9 +33,10 @@ public class LogAspect {
     private static final String RESOURCE_LOG_INFO_MASK = "(" +
             RESOURCE_LOG_CALCULATOR_LIBRARY_MASK + "||" +
             RESOURCE_LOG_CALCULATOR_MODEL_MASK + "||" +
+            RESOURCE_LOG_CALCULATOR_CONTROLLERS_MASK + "||" +
             RESOURCE_LOG_CALCULATOR_LAUNCHER_MASK + ")" +
             " && " + RESOURCE_LOG_EXCLUDE_MASK;
-    private static final String RESOURCE_LOG_DEBUG_MASK = RESOURCE_LOG_ALL_MASK + "&& !" + RESOURCE_LOG_INFO_MASK;
+    private static final String RESOURCE_LOG_DEBUG_MASK = RESOURCE_LOG_ALL_MASK + "&& !(" + RESOURCE_LOG_INFO_MASK + ")";
 
     private HashMap<String, Long> executionTimeMap = new HashMap<>();
 
